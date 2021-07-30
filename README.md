@@ -13,6 +13,7 @@ implemented into the routing routine of Micronaut.
 We tried different ways but finally ended up reintroducing that class into our code, because no other way provided
 a more consistent result especially when stress-testing the application. Please refer to [Howto](#Howto) for more 
 details.
+
 *Important Note*: In order for the whole context propagation to work properly, 3 classes of this project are necessary:
 1. `com.example.MdcInstrumenter` (adapted version of `io.micronaut:micronaut-tracing` dependency's `MdcInstrumenter`.)
 2. `com.example.ServerRequestContextFilterCopy.kt`
