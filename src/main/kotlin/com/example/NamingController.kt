@@ -34,7 +34,7 @@ class NamingService(private val namingClient: NamingClient) {
 
     suspend fun withName(name: String, trackingId: String): HttpResponse<String> {
         return withContext(Dispatchers.IO){
-            delay(100) // "forcing" the initial thread (event loop) to suspend
+            delay(50) // "forcing" the initial thread (event loop) to suspend
             namingClient.getFor(name, trackingId)
         }
     }
@@ -47,12 +47,11 @@ class NamingClient(@Client(id = namingClientId) private val client: HttpClient) 
 
     suspend fun getFor(name: String, trackingId: String): HttpResponse<String> {
         return withContext(Dispatchers.IO) {
-            val uri: URI = UriBuilder.of("http://localhost:8081/greet")
+            val uri: URI = UriBuilder.of("http://localhost:8080/greet")
                 .queryParam("name", name)
                 .build()
 
             val request = HttpRequest.GET<String>(uri).apply {
-                header("my-header", "foo")
                 header("X-TrackingId", trackingId)
             }
 
