@@ -28,11 +28,10 @@ dependencies {
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("javax.annotation:javax.annotation-api")
-    implementation("io.micronaut:micronaut-tracing")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.5.0")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.3")
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
 
