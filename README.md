@@ -1,3 +1,23 @@
+## Problem declaration
+
+On our productive systems we regularly experienced messed up context information in our logging. Thus, making it pretty
+hard for us to provide an accurate issue analysis for our customers.
+Having a closer look into the problem showed, that the context loss happens more often than not during a client call
+when boundaries of Kotlin Coroutines and Reactive Streams merge. This happens with all Micronaut versions >= 2.5.1 .
+
+## One way to solve the problem
+
+As mentioned in [this issue](https://github.com/micronaut-projects/micronaut-core/issues/5656) Micronaut versions >= 2.5.1
+have a class named `ServerRequestContextFilter` removed (because of performance reasons) and in a different way 
+implemented into the routing routine of Micronaut.
+We tried different ways but finally ended up reintroducing that class into our code, because no other way provided
+a more consistent result especially when stress-testing the application. Please refer to [Howto](#Howto) for more 
+details.
+*Important Note*: In order for the whole context propagation to work properly, 3 classes of this project are necessary:
+1. `com.example.MdcInstrumenter` (adapted version of `io.micronaut:micronaut-tracing` dependency's `MdcInstrumenter`.)
+2. `com.example.ServerRequestContextFilterCopy.kt`
+3. `com.example.ServerRequestContextInstrumenterCopy.kt`
+
 ## Howto
 
 - Install [WRK](https://github.com/wg/wrk).
