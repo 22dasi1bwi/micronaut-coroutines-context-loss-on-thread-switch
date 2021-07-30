@@ -8,14 +8,14 @@ when boundaries of Kotlin Coroutines and Reactive Streams merge. This happens wi
 ## One way to solve the problem
 
 As mentioned in [this issue](https://github.com/micronaut-projects/micronaut-core/issues/5656) Micronaut versions >= 2.5.1
-have a class named `ServerRequestContextFilter` removed (because of performance reasons) and in a different way 
+have a class named [ServerRequestContextFilter](https://github.com/micronaut-projects/micronaut-core/blob/2.4.x/http-server/src/main/java/io/micronaut/http/server/context/ServerRequestContextFilter.java) removed (because of performance reasons) and in a different way 
 implemented into the routing routine of Micronaut.
 We tried different ways but finally ended up reintroducing that class into our code, because no other way provided
 a more consistent result especially when stress-testing the application. Please refer to [Howto](#Howto) for more 
 details.
 
 *Important Note*: In order for the whole context propagation to work properly, 3 classes of this project are necessary:
-1. `com.example.MdcInstrumenter` (adapted version of `io.micronaut:micronaut-tracing` dependency's `MdcInstrumenter`.)
+1. `com.example.MdcInstrumenter` (adapted version of `io.micronaut:micronaut-tracing` dependency's [MdcInstrumenter](https://github.com/micronaut-projects/micronaut-core/blob/2.5.x/tracing/src/main/java/io/micronaut/tracing/instrument/util/MdcInstrumenter.java).)
 2. `com.example.ServerRequestContextFilterCopy.kt`
 3. `com.example.ServerRequestContextInstrumenterCopy.kt`
 
