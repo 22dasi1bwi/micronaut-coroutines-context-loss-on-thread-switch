@@ -1,7 +1,7 @@
 package com.example
 
 import org.slf4j.MDC
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 const val TRACKING_ID: String = "tracking_id"
 

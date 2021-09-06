@@ -1,16 +1,14 @@
 package com.example
 
 import io.micronaut.core.order.Ordered
-import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Filter
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.filter.ClientFilterChain
 import io.micronaut.http.filter.HttpClientFilter
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
+import reactor.core.publisher.Mono
 
 @Filter(Filter.MATCH_ALL_PATTERN)
 class HttpClientFilter(private val requestContext: RequestContext) : HttpClientFilter {
@@ -28,7 +26,7 @@ class HttpClientFilter(private val requestContext: RequestContext) : HttpClientF
         }
         logger.info("Remote request URL: {}, ({})", request.uri, trackingId)
 
-        return Flowable.fromPublisher(chain.proceed(request))
+        return Mono.from(chain.proceed(request))
             .doOnNext { logRemoteRequestStatus(it, trackingId) }
     }
 

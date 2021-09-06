@@ -4,7 +4,7 @@ import io.micronaut.scheduling.instrument.Instrumentation
 import io.micronaut.scheduling.instrument.InvocationInstrumenter
 import io.micronaut.scheduling.instrument.InvocationInstrumenterFactory
 import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 class MdcInstrumenter(private val requestContext: RequestContext) : InvocationInstrumenterFactory,

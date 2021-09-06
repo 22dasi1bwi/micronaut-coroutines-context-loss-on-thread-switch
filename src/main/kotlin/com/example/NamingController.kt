@@ -15,7 +15,7 @@ import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.net.URI
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Controller
 class NamingController(private val namingService: NamingService ) {

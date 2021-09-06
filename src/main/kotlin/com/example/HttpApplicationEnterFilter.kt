@@ -5,9 +5,9 @@ import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.Filter
 import io.micronaut.http.filter.OncePerRequestHttpServerFilter
 import io.micronaut.http.filter.ServerFilterChain
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
+import reactor.core.publisher.Mono
 
 @Filter(Filter.MATCH_ALL_PATTERN)
 class HttpApplicationEnterFilter(private val requestContext: RequestContext) : OncePerRequestHttpServerFilter() {
@@ -19,7 +19,7 @@ class HttpApplicationEnterFilter(private val requestContext: RequestContext) : O
         requestContext.trackingId = trackingId
         logger.info("Application enter ($trackingId).")
 
-        return Flowable.fromPublisher(chain.proceed(request))
+        return Mono.from(chain.proceed(request))
             .doOnNext() {
                 logger.info("Application exit ($trackingId).")
             }
