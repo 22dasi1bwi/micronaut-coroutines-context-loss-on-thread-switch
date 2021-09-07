@@ -5,7 +5,7 @@ hard for us to provide an accurate issue analysis for our customers.
 Having a closer look into the problem showed, that the context loss happens more often than not during a client call
 when boundaries of Kotlin Coroutines and Reactive Streams merge. This happens with all Micronaut versions >= 2.5.1 .
 
-## One way to solve the problem
+## One way to solve the problem (Micronaut version: 2.x)
 
 As mentioned in [this issue](https://github.com/micronaut-projects/micronaut-core/issues/5656) Micronaut versions >= 2.5.1
 have a class named [ServerRequestContextFilter](https://github.com/micronaut-projects/micronaut-core/blob/2.4.x/http-server/src/main/java/io/micronaut/http/server/context/ServerRequestContextFilter.java) removed (because of performance reasons) and in a different way 
@@ -18,6 +18,16 @@ details.
 1. `com.example.MdcInstrumenter` (adapted version of `io.micronaut:micronaut-tracing` dependency's [MdcInstrumenter](https://github.com/micronaut-projects/micronaut-core/blob/2.5.x/tracing/src/main/java/io/micronaut/tracing/instrument/util/MdcInstrumenter.java).)
 2. `com.example.ServerRequestContextFilterCopy.kt`
 3. `com.example.ServerRequestContextInstrumenterCopy.kt`
+
+## Broken after upgrade to Micronaut 3.0
+
+After upgrading to Micronaut 3.0 the two classes required to get things working in Micronaut 2.5.x `com.example.ServerRequestContextFilterCopy.kt` and `com.example.ServerRequestContextInstrumenterCopy.kt` are preventing the MDC
+to have proper information once processes are resumed on a different thread after hitting a suspension point.
+
+The removal of those two classes makes stress testing (see [Howto](#Howto) and `execute_benchmark.sh`) only work at a
+rate of approximately *40%*.
+
+Also `com.example.MdcInstrumener` doesn't seem to have an impact whatsoever.
 
 ## Howto
 
