@@ -9,7 +9,7 @@ import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 
-@Filter(Filter.MATCH_ALL_PATTERN)
+@Filter("/trigger")
 class HttpApplicationEnterFilter(private val requestContext: RequestContext) : OncePerRequestHttpServerFilter() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

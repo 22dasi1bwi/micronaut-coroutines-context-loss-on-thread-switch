@@ -10,7 +10,7 @@ import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 
-@Filter(Filter.MATCH_ALL_PATTERN)
+@Filter("/greet")
 class HttpClientFilter(private val requestContext: RequestContext) : HttpClientFilter {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
