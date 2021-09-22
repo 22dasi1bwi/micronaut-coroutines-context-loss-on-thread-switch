@@ -29,6 +29,11 @@ rate of approximately *40%*.
 
 Also `com.example.MdcInstrumener` doesn't seem to have an impact whatsoever.
 
+## Working after testing Micronaut 3.1.0-SNAPSHOT
+After testing the [fix](https://github.com/micronaut-projects/micronaut-core/issues/6113) provided by the Micronaut
+team, I can confirm that the scenario described in this project is working!
+However, it requires `com.example.MdcInstrumener` to be there.
+
 ## Howto
 
 - Install [WRK](https://github.com/wg/wrk).

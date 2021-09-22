@@ -11,6 +11,7 @@ group = "com.example"
 
 val kotlinVersion = project.properties.get("kotlinVersion")
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
