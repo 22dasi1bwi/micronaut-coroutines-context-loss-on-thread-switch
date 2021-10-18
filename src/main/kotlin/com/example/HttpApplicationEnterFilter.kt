@@ -20,8 +20,7 @@ class HttpApplicationEnterFilter(private val requestContext: RequestContext) : H
         logger.info("Application enter ($trackingId).")
 
         return Mono.from(chain.proceed(request))
-            .doOnNext() {
-                logger.info("Application exit ($trackingId).")
-            }
+            .contextWrite { it.put("X-TrackingId", trackingId) }
+            .doOnNext { logger.info("Application exit ($trackingId).") }
     }
 }
