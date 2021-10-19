@@ -13,7 +13,6 @@ import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import java.net.URI
 
@@ -22,7 +21,7 @@ class NamingController(private val namingService: NamingService) {
 
     @Post("/trigger")
     suspend fun trigger(@Body requestBody: NameRequestBody): HttpResponse<String> {
-        return withContext(MDCContext()) { namingService.withName(requestBody.name) }
+        return namingService.withName(requestBody.name)
     }
 }
 
