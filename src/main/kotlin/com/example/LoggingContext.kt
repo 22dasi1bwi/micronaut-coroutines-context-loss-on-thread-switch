@@ -1,12 +1,11 @@
 package com.example
 
+import com.example.ApplicationHeaders.TRACKING_ID
 import org.slf4j.MDC
 import jakarta.inject.Singleton
 
-const val TRACKING_ID: String = "tracking_id"
-
 @Singleton
-class RequestContext {
+class LoggingContext {
 
     var trackingId: String?
         get() = MDC.get(TRACKING_ID)

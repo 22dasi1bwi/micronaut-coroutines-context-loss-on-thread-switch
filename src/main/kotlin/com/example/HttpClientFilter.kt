@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.ApplicationHeaders.TRACKING_ID
 import io.micronaut.core.order.Ordered
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 
 @Filter("/greet")
-class HttpClientFilter(private val requestContext: RequestContext) : HttpClientFilter {
+class HttpClientFilter(private val loggingContext: LoggingContext) : HttpClientFilter {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -20,14 +21,15 @@ class HttpClientFilter(private val requestContext: RequestContext) : HttpClientF
     }
 
     override fun doFilter(request: MutableHttpRequest<*>, chain: ClientFilterChain): Publisher<out HttpResponse<*>> {
-        val trackingId : String = request.headers["X-TrackingId"] as String
-        if (trackingId != requestContext.trackingId){
-           throw IllegalArgumentException("TrackingIds do not match! Request: $trackingId vs. Context: ${requestContext.trackingId}")
+        val originalTrackingId = request.headers[TRACKING_ID] as String
+        val loggingTrackingId = loggingContext.trackingId
+        if (originalTrackingId != loggingTrackingId){
+           throw IllegalArgumentException("TrackingIds do not match! Request: $originalTrackingId vs. Context: $loggingTrackingId")
         }
-        logger.info("Remote request URL: {}, ({})", request.uri, trackingId)
+        logger.info("Remote request URL: {}, ({})", request.uri, originalTrackingId)
 
         return Mono.from(chain.proceed(request))
-            .doOnNext { logRemoteRequestStatus(it, trackingId) }
+            .doOnNext { logRemoteRequestStatus(it, originalTrackingId) }
     }
 
     private fun logRemoteRequestStatus(response: HttpResponse<*>, trackingId: String) {

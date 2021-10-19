@@ -5,7 +5,7 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-        <pattern>%cyan(%d{HH:mm:ss.SSS}) %yellow(trackingId=[%X{tracking_id}]) %green([%thread]) %magenta(%logger{36}) - %msg%n </pattern>
+        <pattern>%cyan(%d{HH:mm:ss.SSS}) %yellow(trackingId=[%X{X-TrackingId}]) %green([%thread]) %magenta(%logger{36}) - %msg%n </pattern>
     </encoder>
 </appender>
 

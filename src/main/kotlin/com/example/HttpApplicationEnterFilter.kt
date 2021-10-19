@@ -10,17 +10,19 @@ import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 
 @Filter("/trigger")
-class HttpApplicationEnterFilter(private val requestContext: RequestContext) : HttpServerFilter {
+class HttpApplicationEnterFilter(private val loggingContext: LoggingContext) : HttpServerFilter {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doFilter(request: HttpRequest<*>, chain: ServerFilterChain): Publisher<MutableHttpResponse<*>> {
+        loggingContext.clear()
         val trackingId = request.headers["X-TrackingId"]
-        requestContext.trackingId = trackingId
+        loggingContext.trackingId = trackingId
         logger.info("Application enter ($trackingId).")
+        val reactorContext = ReactorContext.from(loggingContext.export().map)
 
         return Mono.from(chain.proceed(request))
-            .contextWrite { it.put("X-TrackingId", trackingId) }
+            .contextWrite { reactorContext }
             .doOnNext { logger.info("Application exit ($trackingId).") }
     }
 }

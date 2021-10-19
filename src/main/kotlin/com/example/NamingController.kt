@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.ApplicationHeaders.TRACKING_ID
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
@@ -17,22 +18,21 @@ import kotlinx.coroutines.withContext
 import java.net.URI
 
 @Controller
-class NamingController(private val namingService: NamingService ) {
+class NamingController(private val namingService: NamingService) {
 
     @Post("/trigger")
-    suspend fun trigger(request: HttpRequest<*>, @Body requestBody: NameRequestBody) : HttpResponse<String> {
-        return withContext(Dispatchers.IO + MDCContext()) {
-           namingService.withName(requestBody.name)
-        }
+    suspend fun trigger(@Body requestBody: NameRequestBody): HttpResponse<String> {
+        return withContext(MDCContext()) { namingService.withName(requestBody.name) }
     }
 }
+
 class NameRequestBody(val name: String)
 
 @Singleton
 class NamingService(private val namingClient: NamingClient) {
 
     suspend fun withName(name: String): HttpResponse<String> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             delay(50) // "forcing" the initial thread (event loop) to suspend
             namingClient.getFor(name)
         }
@@ -45,17 +45,15 @@ const val namingClientId = "name"
 class NamingClient(@Client(id = namingClientId) private val client: HttpClient) {
 
     suspend fun getFor(name: String): HttpResponse<String> {
-        return withContext(Dispatchers.IO) {
-            val trackingId = ReactorContext.getOrDefault("X-TrackingId", "UNKNOWN")
-            val uri: URI = UriBuilder.of("http://localhost:8080/greet")
-                .queryParam("name", name)
-                .build()
+        val trackingId = ReactorContext.getOrDefault(TRACKING_ID, "UNKNOWN")
+        val uri: URI = UriBuilder.of("http://localhost:8080/greet")
+            .queryParam("name", name)
+            .build()
 
-            val request = HttpRequest.GET<String>(uri).apply {
-                header("X-TrackingId", trackingId)
-            }
-
-            client.exchange(request, String::class.java).awaitFirst()
+        val request = HttpRequest.GET<String>(uri).apply {
+            header("X-TrackingId", trackingId)
         }
+
+        return client.exchange(request, String::class.java).awaitFirst()
     }
 }

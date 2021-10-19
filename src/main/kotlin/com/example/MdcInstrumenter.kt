@@ -7,7 +7,7 @@ import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory
 import jakarta.inject.Singleton
 
 @Singleton
-class MdcInstrumenter(private val requestContext: RequestContext) : InvocationInstrumenterFactory,
+class MdcInstrumenter(private val loggingContext: LoggingContext) : InvocationInstrumenterFactory,
     ReactiveInvocationInstrumenterFactory {
 
     /**
@@ -17,16 +17,16 @@ class MdcInstrumenter(private val requestContext: RequestContext) : InvocationIn
      * We wanted this to be as minimalistic as possible and did therefore dispense with `micronaut-tracing`dependency.
      */
     override fun newInvocationInstrumenter(): InvocationInstrumenter {
-        val currentRequestContext = requestContext.export()
+        val currentLoggingContext = loggingContext.export()
         return InvocationInstrumenter {
-            val oldRequestContext = requestContext.export()
-            requestContext.import(currentRequestContext)
+            val oldLoggingContext = loggingContext.export()
+            loggingContext.import(currentLoggingContext)
 
             Instrumentation {
-                if (oldRequestContext.isNotEmpty()) {
-                    requestContext.import(oldRequestContext)
+                if (oldLoggingContext.isNotEmpty()) {
+                    loggingContext.import(oldLoggingContext)
                 } else {
-                    requestContext.clear()
+                    loggingContext.clear()
                 }
             }
         }
