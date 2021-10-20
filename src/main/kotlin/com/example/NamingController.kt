@@ -6,15 +6,15 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
+import io.micronaut.reactor.http.client.ReactorHttpClient
 import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import java.net.URI
 
 @Controller
@@ -22,7 +22,7 @@ class NamingController(private val namingService: NamingService) {
 
     @Post("/trigger")
     suspend fun trigger(@Body requestBody: NameRequestBody): HttpResponse<String> {
-        return withContext(MDCContext()) { namingService.withName(requestBody.name) }
+        return namingService.withName(requestBody.name)
     }
 }
 
@@ -42,10 +42,15 @@ class NamingService(private val namingClient: NamingClient) {
 const val namingClientId = "name"
 
 @Singleton
-class NamingClient(@Client(id = namingClientId) private val client: HttpClient) {
+class NamingClient(@Client(id = namingClientId) private val client: ReactorHttpClient,
+                   private val requestContext: RequestContext
+) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     suspend fun getFor(name: String): HttpResponse<String> {
-        val trackingId = ReactorContext.getOrDefault(TRACKING_ID, "UNKNOWN")
+        val trackingId = requestContext.get(TRACKING_ID)
+        logger.info("blub $trackingId")
         val uri: URI = UriBuilder.of("http://localhost:8080/greet")
             .queryParam("name", name)
             .build()
