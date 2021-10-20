@@ -6,9 +6,9 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
-import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
+import io.micronaut.reactor.http.client.ReactorHttpClient
 import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,7 +41,7 @@ class NamingService(private val namingClient: NamingClient) {
 const val namingClientId = "name"
 
 @Singleton
-class NamingClient(@Client(id = namingClientId) private val client: HttpClient) {
+class NamingClient(@Client(id = namingClientId) private val client: ReactorHttpClient) {
 
     suspend fun getFor(name: String): HttpResponse<String> {
         val trackingId = ReactorContext.getOrDefault(TRACKING_ID, "UNKNOWN")
@@ -50,7 +50,7 @@ class NamingClient(@Client(id = namingClientId) private val client: HttpClient) 
             .build()
 
         val request = HttpRequest.GET<String>(uri).apply {
-            header("X-TrackingId", trackingId)
+            header(TRACKING_ID, trackingId)
         }
 
         return client.exchange(request, String::class.java).awaitFirst()

@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.ApplicationHeaders.TRACKING_ID
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.Filter
@@ -20,7 +21,7 @@ class HttpApplicationEnterFilter(private val loggingContext: LoggingContext) : C
 
     override suspend fun filter(request: HttpRequest<*>, chain: ServerFilterChain): MutableHttpResponse<*> {
         loggingContext.clear()
-        val trackingId = request.headers["X-TrackingId"]
+        val trackingId = request.headers[TRACKING_ID]
         loggingContext.trackingId = trackingId
         logger.info("Application enter ($trackingId).")
         val reactorContext = ReactorContext.from(loggingContext.export().map)
